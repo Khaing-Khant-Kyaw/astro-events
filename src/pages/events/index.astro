@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+
+const events = await getCollection('events');
+const sortedEvents = events.sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Upcoming Events</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 700px; margin: 2rem auto; padding: 0 1rem; background: #111; color: #eee; }
+      h1 { color: #ff9900; }
+      .event { border: 1px solid #333; padding: 1rem; margin: 1rem 0; border-radius: 8px; }
+      .event a { color: #ff9900; text-decoration: none; font-size: 1.2rem; font-weight: bold; }
+      .event a:hover { text-decoration: underline; }
+      .meta { color: #999; font-size: 0.9rem; margin-top: 0.3rem; }
+    </style>
+  </head>
+  <body>
+    <h1>Upcoming Events</h1>
+    {sortedEvents.map((event) => (
+      <div class="event">
+        <a href={`/events/${event.id.replace(/\.md$/, '')}`}>{event.data.title}</a>
+        <div class="meta">
+          {event.data.date.toLocaleDateString()} · {event.data.artist} · ${event.data.price}
+        </div>
+      </div>
+    ))}
+  </body>
+</html>

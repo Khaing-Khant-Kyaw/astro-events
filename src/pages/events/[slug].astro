@@ -1,0 +1,42 @@
+---
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const events = await getCollection('events');
+  return events.map((event) => ({
+    params: { slug: event.id.replace(/\.md$/, '') },
+    props: { event },
+  }));
+}
+
+const { event } = Astro.props;
+const { Content } = await render(event);
+const { title, date, artist, price, capacity } = event.data;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 700px; margin: 2rem auto; padding: 0 1rem; background: #111; color: #eee; }
+      h1 { color: #ff9900; }
+      .meta { color: #999; margin-bottom: 2rem; }
+      .description { line-height: 1.7; }
+      a.back { color: #ff9900; }
+    </style>
+  </head>
+  <body>
+    <a class="back" href="/events">← Back to events</a>
+    <h1>{title}</h1>
+    <div class="meta">
+      <p><strong>Date:</strong> {date.toLocaleDateString()}</p>
+      <p><strong>Artist:</strong> {artist}</p>
+      <p><strong>Price:</strong> ${price}</p>
+      <p><strong>Capacity:</strong> {capacity} guests</p>
+    </div>
+    <div class="description">
+      <Content />
+    </div>
+  </body>
+</html>
